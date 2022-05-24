@@ -79,7 +79,6 @@ window.addEventListener('DOMContentLoaded', function() {
                 seconds.textContent = '00';
             }
         }
-
     }
 
     setClock('timer', deadline);
