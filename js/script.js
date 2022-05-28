@@ -1,4 +1,4 @@
-window.addEventListener('DOMContentLoaded', function() {
+window.addEventListener('DOMContentLoaded', () => {
 
     'use strict';
     const tab = document.querySelectorAll('.info-header-tab');
@@ -21,7 +21,7 @@ window.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    info.addEventListener('click', function(event) {
+    info.addEventListener('click', (event) => {
         let target = event.target;
         if (target && target.classList.contains('info-header-tab')) {
             for (let i = 0; i < tab.length; i++) {
@@ -82,4 +82,29 @@ window.addEventListener('DOMContentLoaded', function() {
     }
 
     setClock('timer', deadline);
+
+    // Modal
+    const btn = document.querySelectorAll('.description-btn, .more');
+    // const more = document.querySelector('.more');
+    const overlay = document.querySelector('.overlay');
+    const close = document.querySelector('.popup-close');
+
+    function showModal(button) {
+        button.addEventListener('click', () => {
+            overlay.style.display = 'block';
+            button.classList.add('more-splash');
+            document.body.style.overflow = 'hidden';
+        });
+    }
+    btn.forEach(showModal);
+
+    function closeModal(button) {
+        close.addEventListener('click', () => {
+            overlay.style.display = 'none';
+            button.classList.remove('more-splash');
+            document.body.style.overflow = '';
+        });
+    }
+
+    btn.forEach(closeModal);
 });
