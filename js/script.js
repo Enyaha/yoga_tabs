@@ -119,62 +119,65 @@ window.addEventListener('DOMContentLoaded', () => {
 
     const mainForm = document.querySelector('.main-form');
     const input = document.getElementsByTagName('input');
-    const btnForm = document.querySelectorAll('.description-btn');
-    const contactForm = document.querySelector('#form');
+    const contactForm = document.getElementById('form');
     let statusMessage = document.createElement('div');
 
     statusMessage.classList.add('status');
 
-    function requestForm(form) {
-        let request = new XMLHttpRequest();
-        request.open('POST', 'server.php');
-        // request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        request.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
+    function sendForm(elem) {
+        elem.addEventListener('submit', function(e) {
+            e.preventDefault();
+            elem.appendChild(statusMessage);
+            let formData = new FormData(elem);
+            // let obj = {};
+            // formData.forEach((value, key) => {
+            //     obj[key] = value;
+            // });
+            // let json = JSON.stringify(obj);
 
-        let formData = new FormData(form);
+            function postData(data) {
+                return new Promise(function(resolve, reject) {
+                    let request = new XMLHttpRequest();
 
-        let obj = {};
-        formData.forEach((value, key) => {
-            obj[key] = value;
-        });
-        let json = JSON.stringify(obj);
+                    request.open('POST', 'server.php');
 
-        // request.send(formData);
-        request.send(json);
+                    request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                    // request.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
+                    
+                    request.onreadystatechange = function() {
+                        if (request.readyState < 4) {
+                            resolve();
+                        } else if (request.readyState === 4) {
+                            if (request.readyState == 200 && request.readyState < 3) {
+                                resolve();
+                            } else {
+                                reject();
+                            }
+                        }
+                    };
 
-        request.addEventListener('readystatechange', () => {
-            if (request.readyState < 4) {
-                statusMessage.innerHTML = message.loading;
-            } else if (request.readyState === 4 && request.status == 200) {
-                statusMessage.innerHTML = message.cuccess;
-            } else {
-                statusMessage.innerHTML = message.failure;
+                    request.send(data);
+                    // request.send(json);
+                });
             }
-        });
 
-        for (let i = 0; i < input.length; i++) {
-            input[i].value = '';
-        }
+            function clearInput() {
+                for (let i = 0; i < input.length; i++) {
+                    input[i].value = '';
+                }
+            }
+            postData(formData)
+                .then(() => statusMessage.innerHTML = message.loading)
+                .then(() => {
+                    statusMessage.innerHTML = message.cuccess;
+                })
+                .catch(()=> statusMessage.innerHTML = message.failure)
+                .then(clearInput);
+        });
     }
 
-    mainForm.addEventListener('submit', (event) => {
-        event.preventDefault();
-        mainForm.appendChild(statusMessage);
-        requestForm(mainForm);
-    });
+    sendForm(mainForm);
+    sendForm(contactForm);
 
-    btnForm.forEach((item) => {
-        item.addEventListener('submit', (event) => {
-            event.preventDefault();
-            item.appendChild(statusMessage);
-            requestForm(item);
-        });
-    });
 
-    // не работает
-    contactForm.addEventListener('submit', (event) => {
-        event.preventDefault();
-        contactForm.appendChild(statusMessage);
-        requestForm(contactForm);
-    });
 });
