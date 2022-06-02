@@ -179,5 +179,96 @@ window.addEventListener('DOMContentLoaded', () => {
     sendForm(mainForm);
     sendForm(contactForm);
 
+    // Slider
+
+    let slideIndex = 1;
+    const slides = document.querySelectorAll('.slider-item');
+    const prev = document.querySelector('.prev');
+    const next = document.querySelector('.next');
+    const dotsWrap = document.querySelector('.slider-dots');
+    const dots =document.querySelectorAll('.dot');
+
+    showSlides(slideIndex);
+
+    function showSlides(n) {
+        if (n > slides.length) {
+            slideIndex = 1;
+        }
+        if (n < 1) {
+            slideIndex = slides.length;
+        }
+
+        slides.forEach((item) => item.style.display = 'none');
+        dots.forEach((item) => item.classList.remove('dot-active'));
+
+        slides[slideIndex - 1].style.display = 'block';
+        dots[slideIndex - 1].classList.add('dot-active');
+    }
+
+    function plusSlides(n) {
+        showSlides(slideIndex += n);
+    }
+    function currentSlide(n) {
+        showSlides(slideIndex = n);
+    }
+
+    prev.addEventListener('click', () => {
+        plusSlides(-1);
+    });
+
+    next.addEventListener('click', () => {
+        plusSlides(1);
+    });
+
+    dotsWrap.addEventListener('click', event => {
+        for (let i = 0; i < dots.length + 1; i++) {
+            if (event.target.classList.contains('dot') && event.target == dots[i - 1]) {
+                currentSlide(i);
+            }
+        }
+    });
+
+    // Calc
+
+    const persons = document.querySelectorAll('.counter-block-input')[0];
+    const restDays = document.querySelectorAll('.counter-block-input')[1];
+    const place = document.getElementById('select');
+    const totalValue = document.getElementById('total');
+    let personsSum = 0;
+    let daysSum = 0;
+    let total = 0;
+
+    totalValue.textContent = '0';
+
+    persons.addEventListener('change', function() {
+        personsSum = +this.value;
+        total = personsSum * daysSum * 1500;
+
+        if (restDays.value == '') {
+            totalValue.textContent ='0';
+        } else {
+            totalValue.textContent = total;
+        }
+    });
+
+    restDays.addEventListener('change', function() {
+        daysSum = +this.value;
+        total = personsSum * daysSum * 1500;
+
+        if (persons.value == '') {
+            totalValue.textContent ='0';
+        } else {
+            totalValue.textContent = total;
+        }
+    });
+
+    place.addEventListener('change', function() {
+        if (restDays.value == '' || persons.value == '') {
+            totalValue.textContent ='0';
+        } else {
+            let a = total;
+            totalValue.textContent = a * this.options[this.selectedIndex].value;
+        }
+    });
 
 });
